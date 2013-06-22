@@ -31,38 +31,3 @@ var store = module.exports = function (db, entries, cb) {
     cb(err, { countries: countries, byCapital: byCapital, byLanguage: byLanguage })  
   });
 };
-
-var level    =  require('level-test')( { mem: true })
-  , sublevel =  require('level-sublevel')
-  , dump     =  require('level-dump')
-  , db       =  sublevel(level(null, { valueEncoding: 'json' }));
-
-var countries = {
-     USA:       { language: 'English' ,  capital: 'Washington DC' }
-  ,  Australia: { language: 'English' ,  capital: 'Canbera'       }
-  ,  Germany:   { language: 'German'  ,  capital: 'Berlin'        }
-  ,  Austria:   { language: 'German'  ,  capital: 'Vienna'        }
-};
-
-function whoseCapitalIs(capital, sublevels) {
-  sublevels.byCapital.get(capital, function (err, country) {
-    if (err) return console.error(err);
-    console.log('%s is the capital of %s.', capital, country);
-  });
-}
-
-function whoseLanguage(lang, sublevels) {
-  sublevels.byLanguage.createReadStream({ start: lang })
-    .on('error', console.error)
-    .on('data', console.log);
-}
-
-store(db, countries, function (err, sublevels) {
-  if (err) return console.error(err);
-  console.log('\n=== dump ===')
-  // dump(db);                // dumps nothing since countries are separated from root db
-  // dump.allEntries(db)      // dumps entire db including sublevels and shows how keys are namespaced
-  // dump(sublevels.countries);
-  whoseLanguage('German', sublevels);
-});
-
