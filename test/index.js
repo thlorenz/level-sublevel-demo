@@ -16,7 +16,7 @@ var countries = {
 
 test('\nstoring countries', function (t) {
 
-  t.plan(2)
+  t.plan(3)
   store(db, countries, function (err, sublevels) {
     if (err) console.error(err);
     t.notOk(err, 'stores without error')
@@ -46,5 +46,25 @@ test('\nstoring countries', function (t) {
       )
     })
 
+    t.test('\n# indexes by capital', function (t) {
+      
+      var capitals = []
+      dump(
+          sublevels.byCapital
+        , [].push.bind(capitals)
+        , function () {
+
+            t.deepEqual(
+                capitals
+              , [ { key: 'Berlin', value: '"Germany"' },
+                  { key: 'Canbera', value: '"Australia"' },
+                  { key: 'Vienna', value: '"Austria"' },
+                  { key: 'Washington DC', value: '"USA"' } ]
+            )
+
+            t.end()
+        }
+      )
+    })
   })
 })
