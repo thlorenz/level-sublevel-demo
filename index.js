@@ -9,7 +9,8 @@ function puts(entries) {
 
 var store = module.exports = function (db, entries, cb) {
   var countries = db.sublevel('countries', { valueEncoding: 'json' })
-    , byCapital  =  db.sublevel('byCapital', { valueEncoding: 'utf8' });
+    , byCapital  =  db.sublevel('byCapital', { valueEncoding: 'utf8' })
+    , byLanguage =  db.sublevel('byLanguage', { valueEncoding: 'utf8'});
 
   countries.pre(function (val, add) {
     add({ prefix :  byCapital
@@ -19,8 +20,15 @@ var store = module.exports = function (db, entries, cb) {
     });
   });
 
+  countries.pre(function (val, add) {
+    add({ prefix :  byLanguage
+        , type   :  'put'
+        , key    :  val.value.language
+        , value  :  val.key
+    });
+  });
   countries.batch(puts(entries), function (err) {
-    cb(err, { countries: countries, byCapital: byCapital })  
+    cb(err, { countries: countries, byCapital: byCapital, byLanguage: byLanguage })  
   });
 };
 
@@ -49,7 +57,6 @@ store(db, countries, function (err, sublevels) {
   // dump(db);                // dumps nothing since countries are separated from root db
   // dump.allEntries(db)      // dumps entire db including sublevels and shows how keys are namespaced
   // dump(sublevels.countries);
-  dump(sublevels.byCapital);
-  // whoseCapitalIs('Berlin', sublevels);
+  dump(sublevels.byLanguage);
 });
 
