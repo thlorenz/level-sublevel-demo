@@ -16,11 +16,35 @@ var countries = {
 
 test('\nstoring countries', function (t) {
 
-  t.plan(1)
+  t.plan(2)
   store(db, countries, function (err, sublevels) {
     if (err) console.error(err);
     t.notOk(err, 'stores without error')
 
+    t.test('\n# stores countries correctly', function (t) {
+      
+      var countries = []
+      dump(
+          sublevels.countries
+        , [].push.bind(countries)
+        , function () {
+
+            t.deepEqual(
+                countries
+              , [ { key: 'Australia',
+                    value: { language: 'English', capital: 'Canbera' } },
+                  { key: 'Austria',
+                    value: { language: 'German', capital: 'Vienna' } },
+                  { key: 'Germany',
+                    value: { language: 'German', capital: 'Berlin' } },
+                  { key: 'USA',
+                    value: { language: 'English', capital: 'Washington DC' } } ]
+            )
+
+            t.end()
+        }
+      )
+    })
 
   })
 })
