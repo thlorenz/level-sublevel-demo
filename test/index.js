@@ -16,7 +16,7 @@ var countries = {
 
 test('\nstoring countries', function (t) {
 
-  t.plan(3)
+  t.plan(4)
   store(db, countries, function (err, sublevels) {
     if (err) console.error(err);
     t.notOk(err, 'stores without error')
@@ -66,5 +66,28 @@ test('\nstoring countries', function (t) {
         }
       )
     })
+
+    t.test('\n# indexes by language', function (t) {
+      
+      var languages = []
+      dump(
+          sublevels.byLanguage
+        , [].push.bind(languages)
+        , function () {
+
+            t.deepEqual(
+                languages
+              , [ { key: 'EnglishÿAustralia', value: '"Australia"' },
+                  { key: 'EnglishÿUSA', value: '"USA"' },
+                  { key: 'GermanÿAustria', value: '"Austria"' },
+                  { key: 'GermanÿGermany', value: '"Germany"' } ]
+              , 'creates multiple indexes if a language is spoken in multiple countries' 
+            )
+
+            t.end()
+        }
+      )
+    })
+ 
   })
 })
