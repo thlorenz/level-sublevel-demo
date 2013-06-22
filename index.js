@@ -52,10 +52,9 @@ function whoseCapitalIs(capital, sublevels) {
 }
 
 function whoseLanguage(lang, sublevels) {
-  sublevels.byLanguage.get(lang, function (err, res) {
-    if (err) return console.error(err);
-    console.log(res);
-  });
+  sublevels.byLanguage.createReadStream({ start: lang, end: '\xff\xff' })
+    .on('error', console.error)
+    .on('data', console.log);
 }
 
 store(db, countries, function (err, sublevels) {
