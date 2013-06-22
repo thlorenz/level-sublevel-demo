@@ -51,12 +51,19 @@ function whoseCapitalIs(capital, sublevels) {
   });
 }
 
+function whoseLanguage(lang, sublevels) {
+  sublevels.byLanguage.get(lang, function (err, res) {
+    if (err) return console.error(err);
+    console.log(res);
+  });
+}
+
 store(db, countries, function (err, sublevels) {
   if (err) return console.error(err);
   console.log('\n=== dump ===')
   // dump(db);                // dumps nothing since countries are separated from root db
   // dump.allEntries(db)      // dumps entire db including sublevels and shows how keys are namespaced
   // dump(sublevels.countries);
-  dump(sublevels.byLanguage);
+  whoseLanguage('German', sublevels);
 });
 
