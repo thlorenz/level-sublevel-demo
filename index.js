@@ -23,7 +23,7 @@ var store = module.exports = function (db, entries, cb) {
   countries.pre(function (val, add) {
     add({ prefix :  byLanguage
         , type   :  'put'
-        , key    :  val.value.language
+        , key    :  val.value.language + '\xff' + val.key
         , value  :  val.key
     });
   });
